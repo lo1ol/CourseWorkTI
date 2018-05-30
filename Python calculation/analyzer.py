@@ -30,9 +30,29 @@ def gen_consequences(n, k, hint = None):
 			i.append(first)
 			yield i
 
+def gen_consequences1(n,k):
+	if k == 0 and n == 0:
+		yield []
+		return None
+	if k == 0 and n != 0:
+		return None
+
+	if k == 1:
+		yield [n]
+		return None
+	for i in range(1, n):
+		for elem in gen_consequences1(n-i, k-1):
+			elem.append(i)
+			yield elem
+
 
 Mn = []
 
+def prod(*ls):
+	p =1
+	for i in ls:
+		p *= int(i**(i-1))
+	return p
 
 def M_gen(N):
 	global Mn
@@ -43,7 +63,10 @@ def M_gen(N):
 			Mn.append(1)
 			continue
 		for k in range(1, n+1):
-			sum += int((factorial(n)*n**(n-k-1))/factorial(n-k))
+			predsum = 0
+			for ls in gen_consequences1(n,k):
+				predsum += c(n, *ls)*prod(*ls)
+			sum += int(predsum/k)
 		Mn.append(sum)
 
 
